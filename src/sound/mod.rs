@@ -63,7 +63,7 @@ impl SoundSystem {
                     let wave_value = voice.waveform[waveform_index] as f32 / 255.0;
                     mixed += wave_value * (voice.volume as f32 / 15.0);
                     
-                    voice.position += voice.frequency as f32 / self.sample_rate as f32;
+                    voice.position += voice.frequency as f32 * voice.waveform.len() as f32 / self.sample_rate as f32;
                     if voice.position >= voice.waveform.len() as f32 {
                         voice.position -= voice.waveform.len() as f32;
                     }

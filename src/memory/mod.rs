@@ -14,7 +14,7 @@ use std::path::Path;
 const ROM_SIZE: usize = 0x4000;      // 16KB
 const VRAM_SIZE: usize = 0x0400;     // 1KB
 const COLOR_RAM_SIZE: usize = 0x0400; // 1KB
-const RAM_SIZE: usize = 0x0800;      // 2KB
+const RAM_SIZE: usize = 0x07F0;      // 2032 bytes (0x4800-0x4FEF)
 const SPRITE_SIZE: usize = 0x0010;   // 16 bytes
 
 /// Memory bus for Pac-Man
