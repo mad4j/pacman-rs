@@ -1,0 +1,19 @@
+[package]
+name = "pacman-rs"
+version = "0.1.0"
+edition = "2021"
+authors = ["mad4j"]
+description = "Pac-Man arcade emulator based on MAME driver architecture"
+license = "MIT"
+repository = "https://github.com/mad4j/pacman-rs"
+
+[dependencies]
+zip = "0.6"
+
+[lib]
+name = "pacman_rs"
+path = "src/lib.rs"
+
+[[bin]]
+name = "pacman"
+path = "src/main.rs"
