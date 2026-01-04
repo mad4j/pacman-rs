@@ -21,6 +21,7 @@ target
 #.idea/
 
 # ROM files (copyrighted, should not be in repository)
+roms/*.zip
 roms/*.rom
 roms/*.bin
 roms/*.6e

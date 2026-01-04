@@ -19,23 +19,23 @@ fn main() {
         return;
     }
 
-    let rom_path = &args[1];
+    let zip_path = &args[1];
     
-    // Check if ROM file exists
-    if !Path::new(rom_path).exists() {
-        eprintln!("Error: ROM file not found: {}", rom_path);
+    // Check if ZIP file exists
+    if !Path::new(zip_path).exists() {
+        eprintln!("Error: ZIP file not found: {}", zip_path);
         eprintln!();
-        eprintln!("Please place Pac-Man ROM files in the 'roms/' directory.");
+        eprintln!("Please place pacman.zip in the 'roms/' directory.");
         return;
     }
 
     // Create and initialize emulator
     let mut emulator = PacmanEmulator::new();
     
-    // Load ROM
-    match emulator.load_rom(rom_path) {
+    // Load ROM from ZIP
+    match emulator.load_rom(zip_path) {
         Ok(_) => {
-            println!("ROM loaded successfully: {}", rom_path);
+            println!("ROM loaded successfully from: {}", zip_path);
             println!();
             println!("Emulator initialized with the following components:");
             println!("  - Z80 CPU @ 3.072 MHz");
@@ -63,10 +63,10 @@ fn main() {
 }
 
 fn print_usage(program_name: &str) {
-    println!("Usage: {} <rom_file>", program_name);
+    println!("Usage: {} <zip_file>", program_name);
     println!();
     println!("Example:");
-    println!("  {} roms/pacman.rom", program_name);
+    println!("  {} roms/pacman.zip", program_name);
     println!();
-    println!("ROM files should be placed in the 'roms/' directory.");
+    println!("The ZIP archive should contain Pac-Man ROM files.");
 }

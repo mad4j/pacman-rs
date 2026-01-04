@@ -78,12 +78,12 @@ cargo build --release
 ## Running
 
 ```bash
-cargo run --release -- roms/pacman.rom
+cargo run --release -- roms/pacman.zip
 ```
 
 ## ROM Files
 
-ROM files must be placed in the `roms/` directory. See `roms/README.md` for details on required files and legal information.
+The emulator requires a ZIP archive named `pacman.zip` containing the Pac-Man ROM files. This archive should be placed in the `roms/` directory. See `roms/README.md` for details on required files and legal information.
 
 **Note**: ROM files are copyrighted by Namco/Bandai Namco and are not included in this repository.
 

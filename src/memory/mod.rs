@@ -8,8 +8,10 @@
 //! - 0x4FF0-0x4FFF: Sprite data
 //! - 0x5000-0x50FF: Memory-mapped I/O
 
-use std::fs;
+use std::fs::File;
+use std::io::Read;
 use std::path::Path;
+use zip::ZipArchive;
 
 const ROM_SIZE: usize = 0x4000;      // 16KB
 const VRAM_SIZE: usize = 0x0400;     // 1KB
@@ -40,19 +42,52 @@ impl MemoryBus {
         }
     }
 
-    /// Loads ROM data from file
-    pub fn load_rom(&mut self, rom_path: &str) -> Result<(), String> {
-        let path = Path::new(rom_path);
-        match fs::read(path) {
-            Ok(data) => {
-                if data.len() > ROM_SIZE {
-                    return Err(format!("ROM size {} exceeds maximum {}", data.len(), ROM_SIZE));
+    /// Loads ROM data from a ZIP archive
+    /// 
+    /// The ZIP archive should contain the program ROM files:
+    /// - pacman.6e, pacman.6f, pacman.6h, pacman.6j (4KB each)
+    /// These are concatenated to form the 16KB program ROM
+    pub fn load_rom(&mut self, zip_path: &str) -> Result<(), String> {
+        let path = Path::new(zip_path);
+        
+        // Open ZIP archive
+        let file = File::open(path)
+            .map_err(|e| format!("Failed to open ZIP file: {}", e))?;
+        
+        let mut archive = ZipArchive::new(file)
+            .map_err(|e| format!("Failed to read ZIP archive: {}", e))?;
+        
+        // ROM file names in order (4KB each = 16KB total)
+        let rom_files = ["pacman.6e", "pacman.6f", "pacman.6h", "pacman.6j"];
+        let mut rom_offset = 0;
+        
+        for rom_name in &rom_files {
+            match archive.by_name(rom_name) {
+                Ok(mut file) => {
+                    let mut buffer = Vec::new();
+                    file.read_to_end(&mut buffer)
+                        .map_err(|e| format!("Failed to read {} from ZIP: {}", rom_name, e))?;
+                    
+                    // Each ROM should be 4KB (0x1000 bytes)
+                    if buffer.len() != 0x1000 {
+                        return Err(format!("{} should be 4KB, found {} bytes", rom_name, buffer.len()));
+                    }
+                    
+                    // Copy to ROM at the correct offset
+                    if rom_offset + buffer.len() <= ROM_SIZE {
+                        self.rom[rom_offset..rom_offset + buffer.len()].copy_from_slice(&buffer);
+                        rom_offset += buffer.len();
+                    } else {
+                        return Err(format!("ROM data exceeds {} bytes", ROM_SIZE));
+                    }
                 }
-                self.rom[..data.len()].copy_from_slice(&data);
-                Ok(())
+                Err(_) => {
+                    return Err(format!("ROM file {} not found in ZIP archive", rom_name));
+                }
             }
-            Err(e) => Err(format!("Failed to load ROM: {}", e)),
         }
+        
+        Ok(())
     }
 
     /// Reads a byte from the specified address

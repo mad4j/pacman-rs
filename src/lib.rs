@@ -37,9 +37,11 @@ impl PacmanEmulator {
         }
     }
 
-    /// Loads ROM data from the specified path
-    pub fn load_rom(&mut self, rom_path: &str) -> Result<(), String> {
-        self.memory.load_rom(rom_path)
+    /// Loads ROM data from a ZIP archive
+    /// 
+    /// The ZIP archive should contain the program ROM files.
+    pub fn load_rom(&mut self, zip_path: &str) -> Result<(), String> {
+        self.memory.load_rom(zip_path)
     }
 
     /// Runs a single frame of emulation (1/60th of a second)
